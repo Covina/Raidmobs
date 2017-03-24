@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
 			print ("Cursor raycast hit" + cameraRaycaster.hit.collider.gameObject.name.ToString ());
 
 			// SJ - added to only register new location if target point is walkable
-			// Changed from IF to SWITCH afterward
+			// SJ - Changed from IF to SWITCH afterward
 			switch (cameraRaycaster.layerHit) {
 
 			case Layer.Walkable:
@@ -41,11 +41,14 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 
+		// SJ - get the distance of the move between current position and click position
 		var playerToClickPoint = currentClickTarget - transform.position;
+
+		// SJ - Move until we get within the radius then stop
 		if (playerToClickPoint.magnitude >= walkMoveStopRadius) {
 			m_Character.Move (playerToClickPoint, false, false);
 		} else {
-
+			// SJ - inside the radius
 			m_Character.Move (Vector3.zero, false, false);
 
 		}

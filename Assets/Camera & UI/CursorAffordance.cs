@@ -37,9 +37,13 @@ public class CursorAffordance : MonoBehaviour {
 			case Layer.Enemy:
 				Cursor.SetCursor (attackCursor, cursorHotspot, CursorMode.Auto);
 				break;
-
-			default:
+			case Layer.RaycastEndStop:
 				Cursor.SetCursor (errorCursor, cursorHotspot, CursorMode.Auto);
+				break;
+
+			
+			default:
+				Debug.Log("Unknown Layer; No Cursor Handling");
 				return;
 
 		}			

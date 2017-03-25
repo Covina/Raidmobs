@@ -29,15 +29,15 @@ public class PlayerMovement : MonoBehaviour
 			// SJ - Changed from IF to SWITCH afterward
 			switch (cameraRaycaster.layerHit) {
 
-			case Layer.Walkable:
-				currentClickTarget = cameraRaycaster.hit.point;  // So not set in default case
-				break;
-			case Layer.Enemy:
-				Debug.Log ("Clicked on Enemy");
-				break;
-			default:
-				Debug.Log ("Default reached in Switch");
-				return;
+				case Layer.Walkable:
+					currentClickTarget = cameraRaycaster.hit.point;  // So not set in default case
+					break;
+				case Layer.Enemy:
+					Debug.Log ("Clicked on Enemy");
+					break;
+				default:
+					Debug.Log ("Default reached in Switch");
+					return;
 			}
 		}
 

@@ -21,18 +21,19 @@ public class CursorAffordance : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		cameraRaycaster = GetComponent<CameraRaycaster>();
+
+
+		cameraRaycaster.layerChangeObservers += OnLayerChange;	// SJ - register the observer
 	}
-	
-	// Update is called once per frame
-	// SJ - Changed to LateUpdate
-	void LateUpdate ()
+
+	// SJ - Observer function
+	public void OnLayerChange ()
 	{
 
-		//Debug.Log("Layer hit: " + cameraRaycaster.layerHit);
-
+		//print("OnLayerChange reporting for duty");
+		
 		// SJ - update the cursor based on the what we're mousing over
 		switch (cameraRaycaster.currentLayerHit) {
-
 			case Layer.Walkable:
 				Cursor.SetCursor (walkCursor, cursorHotspot, CursorMode.Auto);
 				break;
@@ -42,14 +43,11 @@ public class CursorAffordance : MonoBehaviour {
 			case Layer.RaycastEndStop:
 				Cursor.SetCursor (errorCursor, cursorHotspot, CursorMode.Auto);
 				break;
-
-			
 			default:
-				Debug.Log("Unknown Layer; No Cursor Handling");
+				Debug.Log ("Unknown Layer; No Cursor Handling");
 				return;
-
-		}			
-
-
+		}
 	}
+	
+
 }

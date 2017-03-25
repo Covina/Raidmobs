@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(CameraRaycaster))]	// SJ - mandatory!
 public class CursorAffordance : MonoBehaviour {
 
 
@@ -11,7 +12,7 @@ public class CursorAffordance : MonoBehaviour {
 	[SerializeField] Texture2D errorCursor = null;
 
 	// where the coordinates are looking
-	[SerializeField] Vector2 cursorHotspot = new Vector2(96,96);
+	[SerializeField] Vector2 cursorHotspot = new Vector2(0,0);
 
 
 	// get access to the raycaster
@@ -30,7 +31,7 @@ public class CursorAffordance : MonoBehaviour {
 		//Debug.Log("Layer hit: " + cameraRaycaster.layerHit);
 
 		// SJ - update the cursor based on the what we're mousing over
-		switch (cameraRaycaster.layerHit) {
+		switch (cameraRaycaster.currentLayerHit) {
 
 			case Layer.Walkable:
 				Cursor.SetCursor (walkCursor, cursorHotspot, CursorMode.Auto);

@@ -5,11 +5,11 @@ using UnityStandardAssets.Characters.ThirdPerson;
 [RequireComponent(typeof (ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour
 {
-    ThirdPersonCharacter m_Character;   // A reference to the ThirdPersonCharacter on the object
+    ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
     Vector3 currentClickTarget;
 
-    private bool isInDirectMode = false;	// TODO consider making this a static later
+    private bool isInDirectMode = false;	
 
     [SerializeField] float walkMoveStopRadius = 0.20f;
 
@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
-        m_Character = GetComponent<ThirdPersonCharacter>();
+        thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
         currentClickTarget = transform.position;
     }
 
@@ -26,9 +26,12 @@ public class PlayerMovement : MonoBehaviour
 	{
 
 		// SJ - Check for swap between mouse movement and WASD keyboard movement
-		if (Input.GetKeyDown (KeyCode.G)) {		// TODO potentially allow players to remap or add in menu
+		if (Input.GetKeyDown (KeyCode.G)) {		
 			isInDirectMode = !isInDirectMode;	// Toggle the movement mode
 			Debug.Log("G Pressed, switching to " + isInDirectMode);
+
+			// SJ - default out the currentClickTarget so the player doesnt return to last known click point
+			currentClickTarget = transform.position;
 		}
 
 		if (isInDirectMode) {
@@ -56,12 +59,12 @@ public class PlayerMovement : MonoBehaviour
 
 		// SJ - calculate movement, pulled from ThirdPersonUserControl
 		// Updated to access camera using the main static
-		Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-		Vector3 m_Move = v*m_CamForward + h*Camera.main.transform.right;
+		Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+		Vector3 movement = v*cameraForward + h*Camera.main.transform.right;
 
 		// SJ - Finally, move the character!
 		// replaced "crouch" and "m_jump" with false
-		m_Character.Move(m_Move, false, false);
+		thirdPersonCharacter.Move(movement, false, false);
 
 	}
 
@@ -73,28 +76,28 @@ public class PlayerMovement : MonoBehaviour
 			print ("Cursor raycast hit" + cameraRaycaster.hit.collider.gameObject.name.ToString ());
 			// SJ - added to only register new location if target point is walkable
 			// SJ - Changed from IF to SWITCH afterward
-			switch (cameraRaycaster.layerHit) {
-			case Layer.Walkable:
-				currentClickTarget = cameraRaycaster.hit.point;
-				// So not set in default case
-				break;
-			case Layer.Enemy:
-				Debug.Log ("Clicked on Enemy");
-				break;
-			default:
-				Debug.Log ("Default reached in Switch");
-				return;
+			switch (cameraRaycaster.currentLayerHit) {
+				case Layer.Walkable:
+					currentClickTarget = cameraRaycaster.hit.point;
+					// So not set in default case
+					break;
+				case Layer.Enemy:
+					Debug.Log ("Clicked on Enemy");
+					break;
+				default:
+					Debug.Log ("Default reached in Switch");
+					return;
 			}
 		}
 		// SJ - get the distance of the move between current position and click position
 		var playerToClickPoint = currentClickTarget - transform.position;
 		// SJ - Move until we get within the radius then stop
 		if (playerToClickPoint.magnitude >= walkMoveStopRadius) {
-			m_Character.Move (playerToClickPoint, false, false);
+			thirdPersonCharacter.Move (playerToClickPoint, false, false);
 		}
 		else {
 			// SJ - inside the radius
-			m_Character.Move (Vector3.zero, false, false);
+			thirdPersonCharacter.Move (Vector3.zero, false, false);
 		}
 	}
 }

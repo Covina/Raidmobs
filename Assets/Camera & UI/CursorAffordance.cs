@@ -27,13 +27,13 @@ public class CursorAffordance : MonoBehaviour {
 	}
 
 	// SJ - Observer function
-	public void OnLayerChange ()
+	public void OnLayerChange (Layer newLayer)
 	{
 
 		//print("OnLayerChange reporting for duty");
 		
 		// SJ - update the cursor based on the what we're mousing over
-		switch (cameraRaycaster.currentLayerHit) {
+		switch (newLayer) {
 			case Layer.Walkable:
 				Cursor.SetCursor (walkCursor, cursorHotspot, CursorMode.Auto);
 				break;

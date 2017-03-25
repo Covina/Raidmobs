@@ -23,7 +23,8 @@ public class CursorAffordance : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	// SJ - Changed to LateUpdate
+	void LateUpdate ()
 	{
 
 		//Debug.Log("Layer hit: " + cameraRaycaster.layerHit);

@@ -5,7 +5,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 using UnityEngine.AI;	// SJ - required to get access to Nav Mesh Agent component
 
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour, IDamageable {
 
 	[SerializeField] private float maxHealthPoints = 100f;
 	[SerializeField] private float playerDetectionRadius = 20f;
@@ -64,4 +64,13 @@ public class Enemy : MonoBehaviour {
 			return currentHealthPoints / maxHealthPoints;
 		}
 	}
+
+	// SJ - From IDamageable Interface
+	public void TakeDamage (float damage)
+	{
+		// Apply Damage
+		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
+
+	}
+
 }

@@ -4,11 +4,23 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 
+	[SerializeField] float damageCaused = 10f;
 
 	void OnTriggerEnter (Collider collider)
 	{
 
-		Debug.Log("Projectile hit " + collider.name);
+		// SJ - Is the colliding object Damageable?  If it is, it will have inherited from IDamageable 
+		// ... and be able to be identified as having a component of IDamageable
+		Component damageableComponent = collider.gameObject.GetComponent (typeof(IDamageable));
+
+		// SJ - if it has an IDamageable component on it, proceed.
+		if (damageableComponent) {
+
+			// SJ - Cast it has IDamageable to access and call its TakeDamage method
+			// ... the individual actions from taking damage are defined within the Damageable objects (Player, Enemy, etc).
+			(damageableComponent as IDamageable).TakeDamage(damageCaused);
+
+		}
 
 	}
 

@@ -11,6 +11,10 @@ public class CursorAffordance : MonoBehaviour {
 	[SerializeField] Texture2D attackCursor = null;
 	[SerializeField] Texture2D errorCursor = null;
 
+
+	private const int walkableLayerNumber = 8;
+	private const int enemyLayerNumber = 9;
+
 	// where the coordinates are looking
 	[SerializeField] Vector2 cursorHotspot = new Vector2(0,0);
 
@@ -22,29 +26,26 @@ public class CursorAffordance : MonoBehaviour {
 	void Start () {
 		cameraRaycaster = GetComponent<CameraRaycaster>();
 
-
-		cameraRaycaster.layerChangeObservers += OnLayerChange;	// SJ - register the observer
+		cameraRaycaster.notifyLayerChangeObservers += OnLayerChange;	// SJ - register the observer
 	}
 
 	// SJ - Observer function
-	public void OnLayerChange (Layer newLayer)
+	public void OnLayerChange (int newLayer)
 	{
 
-		//print("OnLayerChange reporting for duty");
+		print("OnLayerChange() called; newLayer value: [" + newLayer + "]");
 		
 		// SJ - update the cursor based on the what we're mousing over
 		switch (newLayer) {
-			case Layer.Walkable:
+			case walkableLayerNumber:		// Walkable
 				Cursor.SetCursor (walkCursor, cursorHotspot, CursorMode.Auto);
 				break;
-			case Layer.Enemy:
+			case enemyLayerNumber:		// Enemy
 				Cursor.SetCursor (attackCursor, cursorHotspot, CursorMode.Auto);
-				break;
-			case Layer.RaycastEndStop:
-				Cursor.SetCursor (errorCursor, cursorHotspot, CursorMode.Auto);
 				break;
 			default:
 				Debug.Log ("Unknown Layer; No Cursor Handling");
+				Cursor.SetCursor (errorCursor, cursorHotspot, CursorMode.Auto);
 				return;
 		}
 	}

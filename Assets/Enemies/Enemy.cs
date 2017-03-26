@@ -46,10 +46,10 @@ public class Enemy : MonoBehaviour {
 	{
 		// SJ - Calculate distance as float between player and enemy; If it's less than detectionRadius, set Player as as Target
 		distanceFromPlayer = Vector3.Distance (player.transform.position, transform.position);
-		Debug.Log ("Distance from player: " + distanceFromPlayer);
+		//Debug.Log ("Distance from player: " + distanceFromPlayer);
 		// SJ - Are we within range?
 		if (distanceFromPlayer < playerDetectionRadius) {
-			Debug.Log ("Player within range of enemy!");
+			//Debug.Log ("Player within range of enemy!");
 			// acquire Target!
 			aiCharacterControl.SetTarget (player.transform);
 		}

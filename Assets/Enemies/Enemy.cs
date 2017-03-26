@@ -8,7 +8,9 @@ using UnityEngine.AI;	// SJ - required to get access to Nav Mesh Agent component
 public class Enemy : MonoBehaviour, IDamageable {
 
 	[SerializeField] private float maxHealthPoints = 100f;
-	[SerializeField] private float playerDetectionRadius = 20f;
+	[SerializeField] private float detectionRadius = 20f;
+	[SerializeField] private float attackRadius = 10f;
+
 	private float currentHealthPoints = 100f;
 
 	// SJ - Get all the component access for the enemy detecting player bit
@@ -38,17 +40,16 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 		FindIfPlayerInRange ();
 
-
-
 	}
 
+	// SJ - if the player enters the detection radius, move to the player
 	private void FindIfPlayerInRange ()
 	{
 		// SJ - Calculate distance as float between player and enemy; If it's less than detectionRadius, set Player as as Target
 		distanceFromPlayer = Vector3.Distance (player.transform.position, transform.position);
 		//Debug.Log ("Distance from player: " + distanceFromPlayer);
 		// SJ - Are we within range?
-		if (distanceFromPlayer < playerDetectionRadius) {
+		if (distanceFromPlayer < detectionRadius) {
 			//Debug.Log ("Player within range of enemy!");
 			// acquire Target!
 			aiCharacterControl.SetTarget (player.transform);
@@ -70,6 +71,21 @@ public class Enemy : MonoBehaviour, IDamageable {
 	{
 		// Apply Damage
 		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
+
+	}
+
+
+	void OnDrawGizmos()
+	{
+
+		// Draw Detection Radius
+		Gizmos.color = new Color(0f, 0f, 255f, 0.5f);
+		Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+		// Draw Attack Radius
+		Gizmos.color = new Color(255f, 0f, 0f, 0.5f);
+		Gizmos.DrawWireSphere(transform.position, attackRadius);
+
 
 	}
 

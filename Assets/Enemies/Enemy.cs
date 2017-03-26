@@ -7,9 +7,14 @@ using UnityEngine.AI;	// SJ - required to get access to Nav Mesh Agent component
 
 public class Enemy : MonoBehaviour, IDamageable {
 
-	[SerializeField] private float maxHealthPoints = 100f;
-	[SerializeField] private float detectionRadius = 20f;
-	[SerializeField] private float attackRadius = 10f;
+	[SerializeField] float maxHealthPoints = 100f;
+	[SerializeField] float detectionRadius = 20f;
+	[SerializeField] float attackRadius = 10f;
+
+	// Projectile Info
+	[SerializeField] float damagePerShot = 7f;
+	[SerializeField] GameObject projectileToUse;
+	[SerializeField] GameObject projectileSocket;
 
 	private float currentHealthPoints = 100f;
 
@@ -38,27 +43,56 @@ public class Enemy : MonoBehaviour, IDamageable {
 	void Update ()
 	{
 
-		FindIfPlayerInRange ();
+		TargetAcquisition ();
 
 	}
 
 	// SJ - if the player enters the detection radius, move to the player
-	private void FindIfPlayerInRange ()
+	private void TargetAcquisition ()
 	{
 		// SJ - Calculate distance as float between player and enemy; If it's less than detectionRadius, set Player as as Target
 		distanceFromPlayer = Vector3.Distance (player.transform.position, transform.position);
 		//Debug.Log ("Distance from player: " + distanceFromPlayer);
-		// SJ - Are we within range?
+
+		// SJ - chase player
 		if (distanceFromPlayer < detectionRadius) {
 			//Debug.Log ("Player within range of enemy!");
 			// acquire Target!
 			aiCharacterControl.SetTarget (player.transform);
-		}
-		else {
+		} else {
 			// outside range, remove target
 			aiCharacterControl.SetTarget (null);
 		}
+
+		// SJ - Attack Player
+		if (distanceFromPlayer <= attackRadius) {
+
+			FireProjectile ();
+
+		}
+
+
 	}
+
+	void FireProjectile ()
+	{
+		// instantiate projectile
+		GameObject projectile = Instantiate (projectileToUse, projectileSocket.transform.position, Quaternion.identity, projectileSocket.transform) as GameObject;
+
+		// Get the projectile component since we're using it multiple times
+		Projectile projectileComponent = projectile.GetComponent<Projectile> ();
+
+		// set the projectile damage
+		projectileComponent.damageCaused = damagePerShot;
+
+		// aim the projectile
+		Vector3 unitVectorToPlayer = (player.transform.position - projectileSocket.transform.position).normalized;
+
+		// Fire it!
+		projectile.GetComponent<Rigidbody> ().velocity = unitVectorToPlayer * projectileComponent.projectileSpeed;
+
+	}
+
 
 	public float healthAsPercentage {
 		get {

@@ -7,16 +7,18 @@ using UnityEngine.AI;	// SJ - required to get access to Nav Mesh Agent component
 
 public class Enemy : MonoBehaviour, IDamageable {
 
-	[SerializeField] float maxHealthPoints = 100f;
-	[SerializeField] float detectionRadius = 20f;
-	[SerializeField] float attackRadius = 10f;
+	public float maxHealthPoints;
+	public float chaseRadius;
+	public float attackRadius;
 
 	// Projectile Info
-	[SerializeField] float damagePerShot = 7f;
+	public float damagePerShot = 7f;
+	public float secondsBetweenShots = 0.5f;
 	[SerializeField] GameObject projectileToUse;
 	[SerializeField] GameObject projectileSocket;
+	[SerializeField] Vector3 aimOffset = new Vector3(0,1,0);
 
-	private float currentHealthPoints = 100f;
+	private float currentHealthPoints;
 
 	// SJ - Get all the component access for the enemy detecting player bit
 	private ThirdPersonCharacter thirdPersonCharacter = null;
@@ -27,7 +29,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 	// SJ - Calculate how far away the player is
 	private float distanceFromPlayer;
 
-
+	private bool isAttacking = false;
 
 	// Use this for initialization
 	void Start () {
@@ -37,6 +39,10 @@ public class Enemy : MonoBehaviour, IDamageable {
 		aiCharacterControl = GetComponent<AICharacterControl>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		player = GameObject.FindObjectOfType<Player>();
+
+		// set the HP so the UI bar works if HP is scaled up.
+		currentHealthPoints = maxHealthPoints;
+
 	}
 	
 	// Update is called once per frame
@@ -55,7 +61,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 		//Debug.Log ("Distance from player: " + distanceFromPlayer);
 
 		// SJ - chase player
-		if (distanceFromPlayer < detectionRadius) {
+		if (distanceFromPlayer < chaseRadius) {
 			//Debug.Log ("Player within range of enemy!");
 			// acquire Target!
 			aiCharacterControl.SetTarget (player.transform);
@@ -65,9 +71,25 @@ public class Enemy : MonoBehaviour, IDamageable {
 		}
 
 		// SJ - Attack Player
-		if (distanceFromPlayer <= attackRadius) {
+		if (distanceFromPlayer <= attackRadius && !isAttacking) {
 
-			FireProjectile ();
+			// Look at the player
+			transform.LookAt(player.transform);
+
+			isAttacking = true;
+
+			InvokeRepeating ("FireProjectile", 0f, secondsBetweenShots);	// TODO - Change to Coroutine.
+
+			//FireProjectile ();
+
+		} 
+
+		// if player is outside the attack radius, stop firing
+		if (distanceFromPlayer >= attackRadius) {
+
+			// stop the attacking
+			isAttacking = false;
+			CancelInvoke();
 
 		}
 
@@ -76,20 +98,23 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 	void FireProjectile ()
 	{
+		// Look at the player
+		transform.LookAt(player.transform);
+
 		// instantiate projectile
-		GameObject projectile = Instantiate (projectileToUse, projectileSocket.transform.position, Quaternion.identity, projectileSocket.transform) as GameObject;
+		GameObject firedProjectile = Instantiate (projectileToUse, projectileSocket.transform.position, Quaternion.identity) as GameObject;
 
 		// Get the projectile component since we're using it multiple times
-		Projectile projectileComponent = projectile.GetComponent<Projectile> ();
+		Projectile projectileComponent = firedProjectile.GetComponent<Projectile> ();
 
 		// set the projectile damage
 		projectileComponent.damageCaused = damagePerShot;
 
-		// aim the projectile
-		Vector3 unitVectorToPlayer = (player.transform.position - projectileSocket.transform.position).normalized;
+		// aim the projectile and the attacker
+		Vector3 unitVectorToPlayer = (player.transform.position + aimOffset - projectileSocket.transform.position).normalized;
 
 		// Fire it!
-		projectile.GetComponent<Rigidbody> ().velocity = unitVectorToPlayer * projectileComponent.projectileSpeed;
+		firedProjectile.GetComponent<Rigidbody> ().velocity = unitVectorToPlayer * projectileComponent.projectileSpeed;
 
 	}
 
@@ -106,6 +131,10 @@ public class Enemy : MonoBehaviour, IDamageable {
 		// Apply Damage
 		currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
 
+		// Kill enemy (remove from field)
+		if (currentHealthPoints <= 0) {
+			Destroy(gameObject);
+		}
 	}
 
 
@@ -114,7 +143,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 		// Draw Detection Radius
 		Gizmos.color = new Color(0f, 0f, 255f, 0.5f);
-		Gizmos.DrawWireSphere(transform.position, detectionRadius);
+		Gizmos.DrawWireSphere(transform.position, chaseRadius);
 
 		// Draw Attack Radius
 		Gizmos.color = new Color(255f, 0f, 0f, 0.5f);

@@ -22,6 +22,10 @@ public class Projectile : MonoBehaviour {
 			// ... the individual actions from taking damage are defined within the Damageable objects (Player, Enemy, etc).
 			(damageableComponent as IDamageable).TakeDamage(damageCaused);
 
+			// if the projectile damaged its target, destroy it frmo scene
+			Destroy(gameObject);
+
+
 		}
 
 	}

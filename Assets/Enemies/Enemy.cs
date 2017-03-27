@@ -10,10 +10,12 @@ public class Enemy : MonoBehaviour, IDamageable {
 	public float maxHealthPoints;
 	public float chaseRadius;
 	public float attackRadius;
-
-	// Projectile Info
 	public float damagePerShot = 7f;
 	public float secondsBetweenShots = 0.5f;
+	private float timeLastFired = Time.time;
+
+
+	// Projectile Info
 	[SerializeField] GameObject projectileToUse;
 	[SerializeField] GameObject projectileSocket;
 	[SerializeField] Vector3 aimOffset = new Vector3(0,1,0);
@@ -74,13 +76,17 @@ public class Enemy : MonoBehaviour, IDamageable {
 		if (distanceFromPlayer <= attackRadius && !isAttacking) {
 
 			// Look at the player
-			transform.LookAt(player.transform);
+			transform.LookAt (player.transform);
 
 			isAttacking = true;
 
-			InvokeRepeating ("FireProjectile", 0f, secondsBetweenShots);	// TODO - Change to Coroutine.
+			// SJ - stop the double fire when going in/out at the attackRadius boundary
+			//... if its been more secons than the time between shots, fire away!
+			if ((Time.time - timeLastFired) > secondsBetweenShots) {
+				//Debug.Log("Time.time [" + Time.time + "]; timeLastFired [" + timeLastFired + "]; secondsBetweenShots [" + secondsBetweenShots + "]");
+				InvokeRepeating ("FireProjectile", 0f, secondsBetweenShots);	// TODO - Change to Coroutine.
 
-			//FireProjectile ();
+			}
 
 		} 
 
@@ -108,13 +114,14 @@ public class Enemy : MonoBehaviour, IDamageable {
 		Projectile projectileComponent = firedProjectile.GetComponent<Projectile> ();
 
 		// set the projectile damage
-		projectileComponent.damageCaused = damagePerShot;
+		projectileComponent.SetDamage(damagePerShot);
 
 		// aim the projectile and the attacker
 		Vector3 unitVectorToPlayer = (player.transform.position + aimOffset - projectileSocket.transform.position).normalized;
 
 		// Fire it!
 		firedProjectile.GetComponent<Rigidbody> ().velocity = unitVectorToPlayer * projectileComponent.projectileSpeed;
+		timeLastFired = Time.time;
 
 	}
 

@@ -26,6 +26,8 @@ public class Player : MonoBehaviour, IDamageable {
 		// register the observering function
 		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
 
+		currentHealthPoints = maxHealthPoints;
+
 	}
 	
 	// Update is called once per frame

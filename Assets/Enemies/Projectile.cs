@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 
-	public float damageCaused;
+	private float damageCaused;
 	public float projectileSpeed;
+
+	public void SetDamage (float damage)
+	{
+		damageCaused = damage;
+
+	}
 
 
 	void OnTriggerEnter (Collider collider)
@@ -19,10 +25,10 @@ public class Projectile : MonoBehaviour {
 		if (damageableComponent) {
 
 			// SJ - Cast it has IDamageable to access and call its TakeDamage method
-			// ... the individual actions from taking damage are defined within the Damageable objects (Player, Enemy, etc).
+			// ... The individual actions from taking damage are defined within the Damageable objects (Player, Enemy, etc).
 			(damageableComponent as IDamageable).TakeDamage(damageCaused);
 
-			// if the projectile damaged its target, destroy it frmo scene
+			// If the projectile damaged its target, remove it from scene
 			Destroy(gameObject);
 
 

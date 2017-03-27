@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 	public float attackRadius;
 	public float damagePerShot = 7f;
 	public float secondsBetweenShots = 0.5f;
-	private float timeLastFired = Time.time;
+	private float timeLastFired;
 
 
 	// Projectile Info
@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 	[SerializeField] GameObject projectileSocket;
 	[SerializeField] Vector3 aimOffset = new Vector3(0,1,0);
 
-	private float currentHealthPoints;
+
 
 	// SJ - Get all the component access for the enemy detecting player bit
 	private ThirdPersonCharacter thirdPersonCharacter = null;
@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour, IDamageable {
 	// SJ - Calculate how far away the player is
 	private float distanceFromPlayer;
 
+	private float currentHealthPoints;
 	private bool isAttacking = false;
 
 	// Use this for initialization
@@ -44,7 +45,6 @@ public class Enemy : MonoBehaviour, IDamageable {
 
 		// set the HP so the UI bar works if HP is scaled up.
 		currentHealthPoints = maxHealthPoints;
-
 	}
 	
 	// Update is called once per frame
@@ -78,11 +78,14 @@ public class Enemy : MonoBehaviour, IDamageable {
 			// Look at the player
 			transform.LookAt (player.transform);
 
-			isAttacking = true;
+
 
 			// SJ - stop the double fire when going in/out at the attackRadius boundary
 			//... if its been more secons than the time between shots, fire away!
 			if ((Time.time - timeLastFired) > secondsBetweenShots) {
+
+				isAttacking = true;
+
 				//Debug.Log("Time.time [" + Time.time + "]; timeLastFired [" + timeLastFired + "]; secondsBetweenShots [" + secondsBetweenShots + "]");
 				InvokeRepeating ("FireProjectile", 0f, secondsBetweenShots);	// TODO - Change to Coroutine.
 

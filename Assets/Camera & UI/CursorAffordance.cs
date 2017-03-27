@@ -33,7 +33,7 @@ public class CursorAffordance : MonoBehaviour {
 	public void OnLayerChange (int newLayer)
 	{
 
-		print("OnLayerChange() called; newLayer value: [" + newLayer + "]");
+		//print("OnLayerChange() called; newLayer value: [" + newLayer + "]");
 		
 		// SJ - update the cursor based on the what we're mousing over
 		switch (newLayer) {

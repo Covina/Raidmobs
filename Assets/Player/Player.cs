@@ -16,8 +16,8 @@ public class Player : MonoBehaviour, IDamageable {
 
 	public float playerDamagePerHit;
 	public float minTimeBetweenHits = 0.5f;
-	public float lastHitTime = 0f;
 	public float maxAttackRange = 2f;
+	private float lastHitTime = 0f;
 
 	// Use this for initialization
 	void Start () {
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour, IDamageable {
 
 			// get which enemy object it was
 			var enemy = raycastHit.collider.gameObject;
-			Debug.Log ("Mouse clicked on Enemy [" + enemy.name + "]");
+			//Debug.Log ("Mouse clicked on Enemy [" + enemy.name + "]");
 
 			// Is the object even within attack Range?
 			if ( (enemy.transform.position - transform.position).magnitude > maxAttackRange) {

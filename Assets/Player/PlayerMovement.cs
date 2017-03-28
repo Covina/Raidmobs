@@ -136,23 +136,23 @@ public class PlayerMovement : MonoBehaviour
 //	}
 //
 //
-//	void OnDrawGizmos()
-//	{
-//
-//		//print("Gizmos Draw");
-//
-//		Gizmos.color = Color.black;
-//		Gizmos.DrawLine(transform.position, currentDestination);
-//
-//		Gizmos.DrawSphere(currentDestination, 0.1f);	// draw sphere at end of line
-//		Gizmos.DrawSphere(clickPoint, 0.2f);
-//
-//		// Draw Attack Sphere
-//		Gizmos.color = new Color(255f, 0f, 0f, 0.5f);
-//		Gizmos.DrawWireSphere(transform.position, attackMoveStopRadius);
-//
-//
-//	}
+	void OnDrawGizmos()
+	{
+
+		//print("Gizmos Draw");
+
+		Gizmos.color = Color.black;
+		Gizmos.DrawLine(transform.position, currentDestination);
+
+		Gizmos.DrawSphere(currentDestination, 0.1f);	// draw sphere at end of line
+		Gizmos.DrawSphere(clickPoint, 0.2f);
+
+		// Draw Attack Sphere
+		Gizmos.color = new Color(255f, 0f, 0f, 0.5f);
+		Gizmos.DrawWireSphere(transform.position, attackMoveStopRadius);
+
+
+	}
 
 
 

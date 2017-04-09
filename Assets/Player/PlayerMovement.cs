@@ -44,6 +44,9 @@ public class PlayerMovement : MonoBehaviour
 
 	void ProcessMouseClick (RaycastHit raycastHit, int layerHit)
 	{
+
+		currentDestination = raycastHit.point; 
+
 		switch (layerHit) {
 			case enemyLayerNumber:	
 				// Navigate to Enemy

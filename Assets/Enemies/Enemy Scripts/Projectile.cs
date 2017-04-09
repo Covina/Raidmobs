@@ -14,12 +14,12 @@ public class Projectile : MonoBehaviour {
 	}
 
 
-	void OnTriggerEnter (Collider collider)
+	void OnCollisionEnter (Collision collision)
 	{
 
 		// SJ - Is the colliding object Damageable?  If it is, it will have inherited from IDamageable 
 		// ... and be able to be identified as having a component of IDamageable
-		Component damageableComponent = collider.gameObject.GetComponent (typeof(IDamageable));
+		Component damageableComponent = collision.gameObject.GetComponent (typeof(IDamageable));
 
 		// SJ - if it has an IDamageable component on it, proceed.
 		if (damageableComponent) {

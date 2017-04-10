@@ -5,8 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour, IDamageable {
 
 	
-	[SerializeField] float maxHealthPoints = 100f;
-	private float currentHealthPoints = 100f;
+	[SerializeField] private float maxHealthPoints = 100f;
+	[SerializeField] private float currentHealthPoints = 100f;
 
 	private const int walkableLayerNumber = 8;
 	private const int enemyLayerNumber = 9;
@@ -19,20 +19,33 @@ public class Player : MonoBehaviour, IDamageable {
 	public float maxAttackRange = 2f;
 	private float lastHitTime = 0f;
 
+
+	[SerializeField] Weapon weaponInUse;
+	[SerializeField] GameObject weaponSocket;
+
 	// Use this for initialization
 	void Start () {
-		cameraRaycaster = GameObject.FindObjectOfType<CameraRaycaster>();
+		RegisterForMouseClick ();
 
-		// register the observering function
-		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
 
 		currentHealthPoints = maxHealthPoints;
+
+		PutWeaponInHand();
+
+
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	void RegisterForMouseClick ()
+	{
+		cameraRaycaster = GameObject.FindObjectOfType<CameraRaycaster> ();
+		// register the observering function
+		cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
 	}
 
 	// SJ - Getter for Health as percentage
@@ -54,6 +67,16 @@ public class Player : MonoBehaviour, IDamageable {
 
 	}
 
+
+	private void PutWeaponInHand() 
+	{
+		GameObject weaponPrefab = weaponInUse.GetWeaponPrefab();
+
+		var weap = Instantiate(weaponPrefab, weaponSocket.transform);
+		weap.transform.localPosition = weaponInUse.gripTransform.localPosition;
+		weap.transform.localRotation = weaponInUse.gripTransform.localRotation;
+
+	}
 
 
 	// Observer Function to find enemy and damage it.
